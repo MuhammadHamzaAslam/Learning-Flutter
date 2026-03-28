@@ -4,10 +4,16 @@ void main() {
   var practice = LoopPractice();
 
   // Table Generator
-  practice.generateTable();
+  // practice.generateTable();
 
   // Fruit name filter (name contain a letters)
-  practice.fruitFilter();
+  // practice.fruitFilter();
+
+  // Filter & count
+  // practice.filterAndCount();
+
+  // Pattern
+  practice.pattern();
 }
 
 class LoopPractice {
@@ -36,6 +42,32 @@ class LoopPractice {
       if (fruit.toLowerCase().contains('a')) {
         print('Names of fruit containing letter a: $fruit');
       }
+    }
+  }
+
+  void filterAndCount() {
+    List<int> numbers = [10, 25, 30, 45, 50, 65, 80, 95];
+    print('Number in list: $numbers');
+    int count = 0;
+    for (var number in numbers) {
+      if (number > 50) {
+        print('Found number greater than 50: $number');
+        count++;
+      }
+    }
+    print('Total numbers greater than 50 are: $count');
+  }
+
+  void pattern() {
+    print('--- Star Pattern ---');
+    stdout.writeln('Enter the number of rows for pattern');
+    int rows = int.parse(stdin.readLineSync()!);
+    for (int i = 1; i <= rows; i++) {
+      String stars = '';
+      for (int j = 1; j <= i; j++) {
+        stars += '*';
+      }
+      print(stars);
     }
   }
 }
