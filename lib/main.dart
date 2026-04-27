@@ -1,121 +1,316 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: InDriveHomeScreen(),
+    ),
+  );
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class InDriveHomeScreen extends StatelessWidget {
+  const InDriveHomeScreen({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: .fromSeed(seedColor: Colors.deepPurple),
+    return Scaffold(
+      body: Stack(
+        children: [
+          // 1. Background Map Image (Static Image instead of Live Map)
+          Container(
+            width: 380,
+            height: 380,
+            child: Image.network(
+              'https://snazzy-maps-cdn.azureedge.net/assets/1243-xxxxxxxxxxx.png?v=20220106114208', // Yeh ek sample map image hai
+              fit: BoxFit.cover,
+            ),
+          ),
+
+          // 2. Top Circular Buttons (Menu & Share)
+          Positioned(top: 50, left: 20, child: _buildRoundButton(Icons.menu)),
+          Positioned(
+            top: 50,
+            right: 20,
+            child: _buildRoundButton(Icons.reply, isMirror: true),
+          ),
+
+          // 3. Map Marker (Grand Parade)
+          Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 7,
+                  ),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF4A89F3),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: const Text(
+                    "Grand Parade",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 13,
+                    ),
+                  ),
+                ),
+                const Icon(
+                  Icons.location_on,
+                  color: Color(0xFF4A89F3),
+                  size: 48,
+                ),
+              ],
+            ),
+          ),
+
+          // 4. Target Location Button
+          Positioned(
+            right: 20,
+            bottom: 420,
+            child: _buildRoundButton(Icons.near_me),
+          ),
+
+          // 5. Bottom UI Panel
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _buildHowToBanner(),
+                const SizedBox(height: 10),
+                _buildBookingPanel(),
+              ],
+            ),
+          ),
+        ],
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
-}
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+  // --- Helper Widgets (Same as before for consistency) ---
 
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
+  Widget _buildRoundButton(IconData icon, {bool isMirror = false}) {
+    return Container(
+      height: 48,
+      width: 48,
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        shape: BoxShape.circle,
+        boxShadow: [
+          BoxShadow(color: Colors.black12, blurRadius: 10, spreadRadius: 1),
+        ],
+      ),
+      child: Transform(
+        alignment: Alignment.center,
+        transform: isMirror ? Matrix4.rotationY(3.14) : Matrix4.identity(),
+        child: Icon(icon, color: Colors.black87, size: 24),
+      ),
+    );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    return Scaffold(
-      appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+  Widget _buildHowToBanner() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.95),
+        borderRadius: BorderRadius.circular(15),
       ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: .center,
-          children: [
-            const Text('You have pushed the button this many times:'),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
+      child: const Row(
+        children: [
+          Icon(Icons.help_center_rounded, color: Color(0xFF4A89F3), size: 30),
+          SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              "How to use inDrive? Click here to learn!",
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
             ),
-          ],
-        ),
+          ),
+          Icon(Icons.chevron_right, color: Colors.grey, size: 20),
+        ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
+    );
+  }
+
+  Widget _buildBookingPanel() {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(16, 20, 16, 35),
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+        boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 20)],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                _buildServiceIcon("Ride", Icons.directions_car, true),
+                _buildServiceIcon(
+                  "Comfort",
+                  Icons.airline_seat_recline_extra,
+                  false,
+                ),
+                _buildServiceIcon("Courier", Icons.inventory_2, false),
+                _buildServiceIcon("City to city", Icons.map_rounded, false),
+              ],
+            ),
+          ),
+          const SizedBox(height: 25),
+          const Row(
+            children: [
+              Icon(Icons.circle, color: Color(0xFF00A651), size: 16),
+              SizedBox(width: 15),
+              Expanded(
+                child: Text(
+                  "Grand Parade",
+                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.w500),
+                ),
+              ),
+              Text(
+                "Entrance",
+                style: TextStyle(color: Colors.black54, fontSize: 13),
+              ),
+            ],
+          ),
+          const SizedBox(height: 15),
+          // Destination Section (Highlighted Area)
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF7F7F7),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.search, color: Colors.black54, size: 24),
+                const SizedBox(width: 10),
+                const Text(
+                  "To",
+                  style: TextStyle(color: Colors.grey, fontSize: 16),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        _buildChip("South African Revenue Service"),
+                        const SizedBox(width: 8),
+                        _buildChip("Wa..."),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 10),
+          // Fare Section
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 15),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF7F7F7),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: const Row(
+              children: [
+                Icon(Icons.attach_money, color: Colors.black38, size: 20),
+                SizedBox(width: 10),
+                Text(
+                  "Offer your fare",
+                  style: TextStyle(color: Colors.grey, fontSize: 17),
+                ),
+                Spacer(),
+                Icon(Icons.payment_rounded, color: Colors.black87, size: 22),
+              ],
+            ),
+          ),
+          const SizedBox(height: 15),
+          // Action Buttons
+          Row(
+            children: [
+              Expanded(
+                flex: 4,
+                child: Container(
+                  height: 60,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFB9E902),
+                    borderRadius: BorderRadius.circular(18),
+                  ),
+                  alignment: Alignment.center,
+                  child: const Text(
+                    "Find a driver",
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 19),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Container(
+                height: 60,
+                width: 65,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFB9E902),
+                  borderRadius: BorderRadius.circular(18),
+                ),
+                child: const Icon(Icons.tune, color: Colors.black, size: 28),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildChip(String label) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      decoration: BoxDecoration(
+        color: const Color(0xFFE2F7CC),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Text(
+        label,
+        style: const TextStyle(color: Colors.black87, fontSize: 14),
+      ),
+    );
+  }
+
+  Widget _buildServiceIcon(String label, IconData icon, bool isSelected) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 25),
+      child: Column(
+        children: [
+          Container(
+            height: 55,
+            width: 75,
+            decoration: BoxDecoration(
+              color: isSelected
+                  ? const Color(0xFFE3F2FD)
+                  : const Color(0xFFF7F7F7),
+              borderRadius: BorderRadius.circular(15),
+            ),
+            child: Icon(
+              icon,
+              color: isSelected ? Colors.blue : Colors.black45,
+              size: 28,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+            ),
+          ),
+        ],
       ),
     );
   }
